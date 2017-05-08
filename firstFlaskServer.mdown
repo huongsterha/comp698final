@@ -1,0 +1,10 @@
+# Required Tools
+	## If any of these tools are not setup please reference the Tools.md
+		* Github account for version control
+		* Docker for test driven development
+
+	## First Flask Server
+		* Required Files
+			1. Dockerfile
+			2. unitTest.py
+			3. 
