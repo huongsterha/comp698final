@@ -10,8 +10,8 @@ class FlaskrTestCase(unittest.TestCase):
         pass
 
     def test_home_page(self):
-		rv = self.app.get('/')
-		assert b'Rock Climbing' in rv.data
+        rv = self.app.get('/')
+        assert b'Rock Climbing' in rv.data
         
     def test_link_to_my_page(self):
         rv = self.app.get('/Gear')  
@@ -22,5 +22,4 @@ class FlaskrTestCase(unittest.TestCase):
         assert b'La Sportiva' in rv.data 
 
 if __name__ == '__main__':
-
     unittest.main()
