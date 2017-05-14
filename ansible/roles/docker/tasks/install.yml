@@ -19,7 +19,7 @@
 - name: Setup docker repository key
   apt_key:
     id: 0EBFCD88
-    url: https://docker.com/linux/ubuntu/gpg
+    url: https://download.docker.com/linux/ubuntu/gpg 
     state: present
   notify: apt-get update
 
