@@ -35,7 +35,7 @@
 # http://docs.ansible.com/ansible/apt_repository_module.html
 - name: Add docker repo
   apt_repository:
-    repo: deb [arch=amd64] https://docker.com/linux/ubuntu {{ release.stdout }} stable
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ release.stdout }} stable
     state: present
     filename: docker
   notify: apt-get update
