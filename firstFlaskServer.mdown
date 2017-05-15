@@ -1,10 +1,69 @@
-# Required Tools
-	## If any of these tools are not setup please reference the Tools.md
-		* Github account for version control
-		* Docker for test driven development
+#Required Tools
 
-	## First Flask Server
-		* Required Files
+		*Github account for version control
+		*Docker for test driven development
+
+	##First Flask Server
+
+		*Required Files
 			1. Dockerfile
+
 			2. unitTest.py
-			3. 
+
+				![alt text](https://github.com/huongsterha/comp698final/images/index.png)
+
+
+#Linking up Github and Docker 
+
+	1. Make sure the repository that you want to link up to docker is already setup
+
+	2. Go under repositories and name your docker repo preferbly the same name as your github repo
+
+	3. Then go into build and select link to github
+
+	4. Put in the Organization/github account you would like automate builds off of and then select a repository 
+
+	##Setting up automated builds
+
+		1. To set up the automated build go into configure automated builds on docker and set the source repository to the repository you would like to have automatic builds off of
+
+		2. Set the build location to small and then under autotest choose internal pull request
+
+#Logging onto to your aws instance using a key and an ip address given to you by the professor
+	1. chmod 400 your ssh key
+		*Only if a new ssh key was issued, if not ignore this step and continue to the next one
+
+	2. In the directory where your ssh key is:
+	   **ssh -i hha-1492664675.key hha@54.153.61.232**
+
+#Manual method of running flask server
+
+	1.Install docker
+		**sudo apt-get install -y docker.io**
+
+	2. **Make sure that docker is running
+		ps aux | grep docker**
+
+	3. **Check that it can run a simple container
+		sudo docker run ubuntu:xenial echo "hello wrold"**
+
+	4. Git clone the repository you are working on
+		**git clone thelinkofyourrepo**
+
+	5. Build a local image of your docker cloud flask server
+		**sudo docker build -t test /localpath/to/dockerfile**
+
+	6. Pull down you docker images from your account
+		**sudo docker pull yourAccount/yourRepo**
+
+	7. Check to list the images you have
+		**sudo docker images**
+
+	8. Start a container using your docker image and keep it running in the background
+		**sudo docker run -d -p 8080:yourPortNumber yourAccount/yourRepo python3 index.py** 
+		*If a port number is not specified then it designates to 5000
+
+		*The -d keeps it running in the background and the -p designates the port it will run at.
+
+	9. Check to see if your flask server is running by opening it up in a browser
+		yourourIPAddress:8080indexImage
