@@ -110,6 +110,9 @@ Ansible allows for provisioning, configuaration managment, and application deplo
 1. Can be slow when checking system-state and on larger systems
 
 ### Installing Docker service using ansible playbook
+*This command start up this ansible playbook 
+*Replace xxxxxxx here with your AWS username 
+__ansible-playbook configure-host.yml -v --extra-vars "student_username=xxxxxxx"__
 	---
 	# Install the docker service
 	# This task follows the install directions found here:
@@ -161,6 +164,9 @@ Ansible allows for provisioning, configuaration managment, and application deplo
     	cache_valid_time: 1800
 
 ### Running the production page with an ansible playbook
+*Runs the this ansible playbook
+__ansible-playbook deploy-website-production.yml -v__
+
 	*Docker tag release version and host and container port need to be specified
 	*Here we are using port 8080 twice and the release-0.2.1
 	---
@@ -179,6 +185,9 @@ Ansible allows for provisioning, configuaration managment, and application deplo
     	- unh698
 
 ### Running the staging page with an ansible playbook
+*Runs the this ansible playbook
+__ansible-playbook deploy-website-staging.yml -v__
+
 	*Docker tag release version and host and container port need to be specified
 	*Here we are using port 8080 twice and the latest release version which is 0.2.2
 	---
@@ -197,9 +206,10 @@ Ansible allows for provisioning, configuaration managment, and application deplo
 
 ## Prometheus Metrics
 Allows the user to analyze data using a counter, gauge, histogram, or summary.
-1.Make sure to set up an install in your Dockerfile
+1.Pip install prometheus_client
+2.Make sure to set up an install in your Dockerfile
 	__RUN pip3 install prometheus_client__
-2.It also needs to be imported and setup in your main python file
+3.It also needs to be imported and setup in your main python file
 	*__from prometheus_metrics import setup_metrics__
 	*__setup_metrics(app)__
 
