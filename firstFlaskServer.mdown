@@ -5,7 +5,9 @@
 * Required Files
 	1. Dockerfile
 	2. unitTest.py
-	![alt text](https://github.com/huongsterha/comp698final/tree/master/images/index.png)
+	
+![UnitTest Example](/images/index.png)
+Format: ![Alt Text](url)
 
 # Linking up Github and Docker 
 	1. Make sure the repository that you want to link up to docker is already setup
@@ -28,25 +30,24 @@
 # Manual method of running flask server
 
 	1.Install docker
-		**sudo apt-get install -y docker.io**
+	**sudo apt-get install -y docker.io**
 
-	2. **Make sure that docker is running
-		ps aux | grep docker**
+	2. Make sure that docker is running **ps aux | grep docker**
 
-	3. **Check that it can run a simple container
-		sudo docker run ubuntu:xenial echo "hello world"**
+	3. Check that it can run a simple container
+	**sudo docker run ubuntu:xenial echo "hello world"**
 
 	4. Git clone the repository you are working on
-		**git clone thelinkofyourrepo**
+	**git clone thelinkofyourrepo**
 
 	5. Build a local image of your docker cloud flask server
-		**sudo docker build -t test /localpath/to/dockerfile**
+	**sudo docker build -t test /localpath/to/dockerfile**
 
 	6. Pull down you docker images from your account
 		**sudo docker pull yourAccount/yourRepo**
 
 	7. Check to list the images you have
-		** sudo docker images **
+	**sudo docker images**
 
 	8. Start a container using your docker image and keep it running in the background
 		**sudo docker run -d -p 8080:yourPortNumber yourAccount/yourRepo python3 index.py** 
@@ -56,4 +57,6 @@
 
 	9. Check to see if your flask server is running by opening it up in a browser
 		yourourIPAddress:8080indexImage
-	![alt text](https://github.com/huongsterha/comp698final/tree/master/images/workflow.png)
+
+![workflow](/images/workflow.png)
+Format: ![Alt Text](url)
