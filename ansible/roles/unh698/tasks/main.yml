@@ -28,5 +28,5 @@
 #   http://docs.ansible.com/ansible/uri_module.html
 - name: verify that webserver is running
   uri:
-    url: "http://54.153.61.232:{{ unh698_host_port }}"
+    url: "http://52.53.195.53:{{ unh698_host_port }}"
     method: GET

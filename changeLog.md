@@ -52,6 +52,8 @@
 ##Changes
 
 	*Tags used for production and staging
+	*More documentation
+	*IP address that the website is running on
 
 	
 	

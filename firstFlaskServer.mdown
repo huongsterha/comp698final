@@ -1,62 +1,256 @@
-# Required Tools
-* Github account for version control
-* Docker for test driven development
-## First Flask Server
-* Required Files
+# First Flask Server
+*Table of Contents
+1.[Link to Header](## Required Files)
+2.[Link to Header](## Required Tools)
+3.[Link to Header](## Logging onto to your aws instance)
+4.[Link to Header](## Manual method of running flask server)
+5.[Link to Header](## Ansible)
+	*[Link to Header](### Installing Docker service using ansible playbook)
+	*[Link to Header](### Running the production page with an ansible playbook)
+	*[Link to Header](### Running the production page with an ansible playbook)
+6.[Link to Header](## Prometheus Metrics)
+
+## Required Files
 	1. Dockerfile
 	2. unitTest.py
+## Required Tools
+	1. Github account for version control
+		*Workflow to minimize bugs on the master branch
+		1. Make changes
+		2. Cut branch off of master/checkout new branch
+		3. Add and commit changes on new branch
+		4. Push to branch to origin 
+		5. Pull request with new branch and master
+		6. If all tests pass merge into master
+		7. If test do not pass, go back to step one until tests pass
+		8. Checkout master pull from origin
+
+	2. Docker for test driven development and version control
+		*Pros
+		1.Allows for continuous deployment and testing
+		2.Multi-cloud Platform
+		3.Secure
+		*Cons
+		1.Meant for micro-service type application developement
+		2.Limited portability between servers
+	3. Flask for web applcaton and framework
+		*Pip install Flask
+		*Pros
+		1. Light weight and easy 
+		2. Good for small and simple web applications
+		*Cons
+		1.Typically not used in production
+		2.Does not scale well
+		3.Only serves one request at a time
 	
 ![UnitTest Example](/images/index.png)
-Format: ![Alt Text](url)
 
-# Linking up Github and Docker 
+## Linking up Github and Docker 
 	1. Make sure the repository that you want to link up to docker is already setup
 	2. Go under repositories and name your docker repo preferbly the same name as your github repo
 
 	3. Then go into build and select link to github
 	4. Put in the Organization/github account you would like automate builds off of and then select a repository 
-## Setting up automated builds
+### Setting up automated builds
 
 	1. To set up the automated build go into configure automated builds on docker and set the source repository to the repository you would like to have automatic builds off of
 	2. Set the build location to small and then under autotest choose internal pull request
 
-# Logging onto to your aws instance using a key and an ip address given to you by the professor
+## Logging onto to your aws instance 
 	1. chmod 400 your ssh key
-		*Only if a new ssh key was issued, if not ignore this step and continue to the next one
+	*Only if a new ssh key was issued, if not ignore this step and continue to the next one
 
 	2. In the directory where your ssh key is:
-	   ** ssh -i hha-1492664675.key hha@54.153.61.232 **
+	__ssh -i hha-1492664675.key hha@54.153.61.232__
 
-# Manual method of running flask server
+## Manual method of running flask server
 
 	1.Install docker
-	**sudo apt-get install -y docker.io**
+	__sudo apt-get install -y docker.io__
 
 	2. Make sure that docker is running **ps aux | grep docker**
 
 	3. Check that it can run a simple container
-	**sudo docker run ubuntu:xenial echo "hello world"**
+	__sudo docker run ubuntu:xenial echo "hello world"__
 
 	4. Git clone the repository you are working on
-	**git clone thelinkofyourrepo**
+	__git clone thelinkofyourrepo__
 
 	5. Build a local image of your docker cloud flask server
-	**sudo docker build -t test /localpath/to/dockerfile**
+	__sudo docker build -t test /localpath/to/dockerfile__
 
 	6. Pull down you docker images from your account
-		**sudo docker pull yourAccount/yourRepo**
+	__sudo docker pull yourAccount/yourRepo__
 
 	7. Check to list the images you have
-	**sudo docker images**
+	__sudo docker images__
 
 	8. Start a container using your docker image and keep it running in the background
-		**sudo docker run -d -p 8080:yourPortNumber yourAccount/yourRepo python3 index.py** 
-		*If a port number is not specified then it designates to 5000
+	__sudo docker run -d -p 8080:yourPortNumber yourAccount/yourRepo python3 index.py__
+	*If a port number is not specified then it designates to 5000
 
-		*The -d keeps it running in the background and the -p designates the port it will run at.
+	*The -d keeps it running in the background and the -p designates the port it will run at.
 
 	9. Check to see if your flask server is running by opening it up in a browser
 		yourourIPAddress:8080indexImage
 
 ![workflow](/images/workflow.png)
-Format: ![Alt Text](url)
+
+##Ansible 
+
+Ansible allows for provisioning, configuaration managment, and application deployment to be done seamlessly and automatically. We are using it for to automate our docker install and flask server setup.
+
+*Pros
+1.Parallel execution on mulitiple platforms
+2.A library with ready to modules
+3.Automatic step by tep reporting
+4. Good readability and low learning curve
+
+*Cons
+1. Can be slow when checking system-state and on larger systems
+
+### Installing Docker service using ansible playbook
+*This command start up this ansible playbook 
+*Replace xxxxxxx here with your AWS username 
+__ansible-playbook configure-host.yml -v --extra-vars "student_username=xxxxxxx"__
+	---
+	# Install the docker service
+	# This task follows the install directions found here:
+	# https://docs.docker.com/engine/installation/linux/ubuntu/
+	# Replace the xxxxxxx entries with what will the appropriate entries
+	- name: install docker dependencies
+  	apt:
+    	pkg: '{{ item }}'
+    	update_cache: yes
+    	cache_valid_time: 1800
+  	with_items:
+    	- apt-transport-https
+    	- ca-certificates 
+    	- curl 
+    	- software-properties-common
+
+	# Add docker's GPG key
+	# http://docs.ansible.com/ansible/apt_key_module.html
+	- name: Setup docker repository key
+  	apt_key:
+    	id: 0EBFCD88
+    	url: https://download.docker.com/linux/ubuntu/gpg 
+    	state: present
+  	notify: apt-get update
+
+	# This command runs on the server to determine what version of ubuntu is running
+	# The command's output to `lsb_release -c -s` is saved in `release` and
+	# available for the next step.
+	- name: Get release
+  	command: lsb_release -c -s
+  	register: release
+
+	# Here we add docker's repository to allow the system to do an apt-get install of
+	# official docker packages.
+	# http://docs.ansible.com/ansible/apt_repository_module.html
+	- name: Add docker repo
+  	apt_repository:
+    	repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ release.stdout }} stable
+    	state: present
+    	filename: docker
+  	notify: apt-get update
+
+	# Install the docker service.  Fix the name of the package.
+	# http://docs.ansible.com/ansible/apt_module.html
+	- name: Install the latest version of docker community edition
+  	apt:
+    	pkg: docker-ce
+    	update_cache: yes
+    	cache_valid_time: 1800
+
+### Running the production page with an ansible playbook
+*Runs the this ansible playbook
+__ansible-playbook deploy-website-production.yml -v__
+
+	*Docker tag release version and host and container port need to be specified
+	*Here we are using port 8080 twice and the release-0.2.1
+	---
+	# The production version of docker-cloud-test should be the image that has just
+	# a main page with the 'Rock Climbing' text.  This version of the website
+	# should be available on port 8080 of your server.
+	- name: Deploy the production version of your website based on the previous tag of your docker-cloud-test image
+  	hosts: localhost
+  	become: true
+  	vars:
+    	unh698_environment: production
+    	unh698_image_version: release-0.2.1
+    	unh698_host_port: 8080
+    	unh698_container_port: 8080
+  	roles:
+    	- unh698
+
+### Running the staging page with an ansible playbook
+*Runs the this ansible playbook
+__ansible-playbook deploy-website-staging.yml -v__
+
+	*Docker tag release version and host and container port need to be specified
+	*Here we are using port 8080 twice and the latest release version which is 0.2.2
+	---
+	# The production version of docker-cloud-test should be the image that includes the website with
+	# your topic subpage.  This version of the website should be available on port 8081 of your server.
+	- name: Deploy the staging version of your website based on the newest tag of your docker-cloud-test image
+  	hosts: localhost
+  	become: true
+  	vars:
+    	unh698_environment: staging
+    	unh698_image_version: release-0.2.2
+    	unh698_host_port: 8081
+    	unh698_container_port: 8080
+  	roles:
+    	- unh698
+
+## Prometheus Metrics
+Allows the user to analyze data using a counter, gauge, histogram, or summary.
+1.Pip install prometheus_client
+2.Make sure to set up an install in your Dockerfile
+	__RUN pip3 install prometheus_client__
+3.It also needs to be imported and setup in your main python file
+	*__from prometheus_metrics import setup_metrics__
+	*__setup_metrics(app)__
+
+
+	import time
+	from flask import request
+	from flask import Response
+	from prometheus_client import Summary, Counter, Histogram
+	from prometheus_client.exposition import generate_latest
+	from prometheus_client.core import  CollectorRegistry
+	from prometheus_client.multiprocess import MultiProcessCollector
+
+	_INF = float("inf")
+	# Create a metric to track time spent and requests made.
+	REQUEST_TIME = Histogram(
+    	'app:request_processing_seconds', 
+    	'Time spent processing request',
+    	['method', 'endpoint'],
+    	buckets=tuple([0.0001, 0.001, .01, .1, 1, _INF])
+	)
+	REQUEST_COUNTER = Counter(
+    	'app:request_count', 
+    	'Total count of requests', 
+    	['method', 'endpoint', 'http_status']
+	)
+
+
+	def setup_metrics(app):
+    	@app.before_request
+    	def before_request():
+        	request.start_time = time.time()
+
+    	@app.after_request
+    	def increment_request_count(response):
+        	request_latency = time.time() - request.start_time
+        	REQUEST_TIME.labels(request.method, request.path
+            	).observe(request_latency)
+
+        	REQUEST_COUNTER.labels(request.method, request.path,
+                	response.status_code).inc()
+        	return response
+  
+
+
