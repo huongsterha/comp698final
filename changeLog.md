@@ -48,6 +48,7 @@
 ##Added
 
 	*changeLog.md
+	*More documentation
 
 ##Changes
 
